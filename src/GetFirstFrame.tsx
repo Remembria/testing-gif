@@ -4,10 +4,6 @@ export function useFirstVideoFrame() {
 	const [imageSrc, setImageSrc] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [videoSize, setVideoSize] = useState<{
-		width: number;
-		height: number;
-	} | null>(null);
 
 	const extractFirstFrame = async (file: File | Blob) => {
 		setLoading(true);
@@ -27,7 +23,6 @@ export function useFirstVideoFrame() {
 
 				video.addEventListener("loadeddata", () => {
 					video.currentTime = 0;
-					setVideoSize({ width: video.videoWidth, height: video.videoHeight });
 				});
 
 				video.addEventListener("seeked", () => {
@@ -51,8 +46,10 @@ export function useFirstVideoFrame() {
 			});
 
 			setImageSrc(base64);
-		} catch (err: any) {
-			setError(err.toString());
+		} catch (err) {
+			if (err instanceof Error) {
+				setError(err.toString());
+			}
 		} finally {
 			setLoading(false);
 		}
